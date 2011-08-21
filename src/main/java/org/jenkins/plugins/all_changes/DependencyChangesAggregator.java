@@ -29,7 +29,7 @@ import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -38,7 +38,7 @@ import java.util.Map;
 @Extension
 public class DependencyChangesAggregator extends ChangesAggregator {
     @Override
-    public List<AbstractBuild> aggregateBuildsWithChanges(AbstractBuild build) {
+    public Collection<AbstractBuild> aggregateBuildsWithChanges(AbstractBuild build) {
         ImmutableList.Builder<AbstractBuild> builder = ImmutableList.<AbstractBuild>builder();
         Map<AbstractProject, AbstractBuild.DependencyChange> depChanges = build.getDependencyChanges((AbstractBuild) build.getPreviousBuild());
         for (AbstractBuild.DependencyChange depChange : depChanges.values()) {

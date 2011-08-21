@@ -26,6 +26,7 @@ package org.jenkins.plugins.all_changes;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import hudson.model.AbstractBuild;
@@ -33,6 +34,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.scm.ChangeLogSet;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,6 +46,8 @@ import java.util.Set;
 public class AllChangesAction implements Action {
 
     private AbstractProject<?, ?> project;
+    transient
+    List<ChangesAggregator> aggregators;
 
     AllChangesAction(AbstractProject<?, ?> project) {
         this.project = project;
@@ -67,7 +71,7 @@ public class AllChangesAction implements Action {
      * @param build
      * @return
      */
-    public static Multimap<ChangeLogSet.Entry, AbstractBuild> getAllChanges(AbstractBuild build) {
+    public Multimap<ChangeLogSet.Entry, AbstractBuild> getAllChanges(AbstractBuild build) {
         Set<AbstractBuild> builds = getContributingBuilds(build);
         Multimap<String, ChangeLogSet.Entry> changes = ArrayListMultimap.create();
         for (AbstractBuild changedBuild : builds) {
@@ -91,7 +95,10 @@ public class AllChangesAction implements Action {
      *
      * @return all changes which contribute to the given build
      */
-    public static Set<AbstractBuild> getContributingBuilds(AbstractBuild build) {
+    public Set<AbstractBuild> getContributingBuilds(AbstractBuild build) {
+        if (aggregators == null) {
+            aggregators = ImmutableList.copyOf(ChangesAggregator.all());
+        }
         Set<AbstractBuild> builds = Sets.newHashSet();
         builds.add(build);
         int size = 0;
@@ -99,9 +106,9 @@ public class AllChangesAction implements Action {
         do {
             size = builds.size();
             Set<AbstractBuild> newBuilds = Sets.newHashSet();
-            for (ChangesAggregator aggregator : ChangesAggregator.all()) {
-                for (AbstractBuild abstractBuild : builds) {
-                    newBuilds.addAll(aggregator.aggregateBuildsWithChanges(build));
+            for (ChangesAggregator aggregator : aggregators) {
+                for (AbstractBuild depBuild : builds) {
+                    newBuilds.addAll(aggregator.aggregateBuildsWithChanges(depBuild));
                 }
             }
             builds.addAll(newBuilds);

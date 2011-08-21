@@ -30,8 +30,6 @@ import hudson.model.AbstractBuild
 import hudson.model.AbstractBuild.DependencyChange
 import hudson.scm.ChangeLogSet
 import java.text.DateFormat
-import org.apache.commons.jelly.XMLOutput
-import org.dom4j.io.SAXContentHandler
 import org.jvnet.localizer.LocaleProvider
 
 f = namespace(lib.FormTagLib)
@@ -39,15 +37,7 @@ l = namespace(lib.LayoutTagLib)
 t = namespace("/lib/hudson")
 st = namespace("jelly:stapler")
 
-private def wrapOutput(Closure viewInstructions) {
-  def sc = new SAXContentHandler()
-  def old = setOutput(new XMLOutput(sc))
-  viewInstructions();
-  setOutput(old);
-  return sc
-}
-
-l.layout(title: _("All Changes")) {
+l.layout(title: _("all.changes.title", my.project.name)) {
   st.include(page: "sidepanel.jelly", it: my.project)
   l.main_panel() {
     def from = request.getParameter('from')
@@ -55,44 +45,64 @@ l.layout(title: _("All Changes")) {
 
     h1(_("All Changes"))
     def builds = Functions.filter(my.project.buildsAsMap, from, to).values()
-    for (build in builds) {
-      Multimap<ChangeLogSet.Entry, AbstractBuild> changes = my.getAllChanges(build);
-      if (changes.empty) {
-        continue
-      }
-      h2() {
-        a(href: "${my.project.absoluteUrl}/${build.number}/changes",
-                "${build.displayName}  (${DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, LocaleProvider.locale).format(build.timestamp.time)})")
-      }
-      ol() {
-        for (entry in changes.keySet()) {
-          li() {
-            showChangeSet(entry)
-            boolean firstDrawn = false
-            for (AbstractBuild b in changes.get(entry)) {
-              if (b != build) {
-                if (!firstDrawn) {
-                  text(" (")
-                  firstDrawn = true
-                }
-                else {
-                  text(", ")
-                }
-                a(href: "${rootURL}/${b.project.url}") {text(b.project.displayName)}
-                st.nbsp()
-                a(href: "${rootURL}/${b.url}") {
-                  text(b.displayName)
-                }
-              }
-            }
-            if (firstDrawn) {
-              text(")")
-            }
+    if (builds.empty) {
+      text(_("No builds."))
+    } else {
+      showChanges(builds)
+    }
+  }
+}
 
-          }
+private showChanges(Collection<AbstractBuild> builds) {
+  boolean hadChanges = false;
+  for (AbstractBuild build in builds) {
+    Multimap<ChangeLogSet.Entry, AbstractBuild> changes = my.getAllChanges(build);
+    if (changes.empty) {
+      continue
+    }
+    hadChanges = true
+    h2() {
+      a(href: "${my.project.absoluteUrl}/${build.number}/changes",
+              """${build.displayName}  (${
+                DateFormat.getDateTimeInstance(
+                      DateFormat.MEDIUM,
+                      DateFormat.MEDIUM,
+                      LocaleProvider.locale).format(build.timestamp.time)})""")
+    }
+    ol() {
+      for (entry in changes.keySet()) {
+        li() {
+          showEntry(entry, build, changes.get(entry))
         }
       }
     }
+  }
+  if (!hadChanges) {
+    text(_("No changes in any of the builds."))
+  }
+}
+
+private def showEntry(entry, AbstractBuild build, Collection<AbstractBuild> builds) {
+  showChangeSet(entry)
+  boolean firstDrawn = false
+  for (AbstractBuild b in builds) {
+    if (b != build) {
+      if (!firstDrawn) {
+        text(" (")
+        firstDrawn = true
+      }
+      else {
+        text(", ")
+      }
+      a(href: "${rootURL}/${b.project.url}") {text(b.project.displayName)}
+      st.nbsp()
+      a(href: "${rootURL}/${b.url}") {
+        text(b.displayName)
+      }
+    }
+  }
+  if (firstDrawn) {
+    text(")")
   }
 }
 

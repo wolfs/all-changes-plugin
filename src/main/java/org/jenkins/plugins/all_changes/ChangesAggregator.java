@@ -29,10 +29,10 @@ import hudson.ExtensionPoint;
 import hudson.model.AbstractBuild;
 import jenkins.model.Jenkins;
 
-import java.util.List;
+import java.util.Collection;
 
 public abstract class ChangesAggregator implements ExtensionPoint {
-    public abstract List<AbstractBuild> aggregateBuildsWithChanges(AbstractBuild build);
+    public abstract Collection<AbstractBuild> aggregateBuildsWithChanges(AbstractBuild build);
 
     public static ExtensionList<ChangesAggregator> all() {
         return Jenkins.getInstance().getExtensionList(ChangesAggregator.class);
