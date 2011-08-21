@@ -38,6 +38,7 @@ import java.util.Set;
 /**
  * Action to calculate all changes for a build
  * It uses ChangesAggregators to to so.
+ *
  * @author wolfs
  */
 public class AllChangesAction implements Action {
@@ -47,6 +48,7 @@ public class AllChangesAction implements Action {
     AllChangesAction(AbstractProject<?, ?> project) {
         this.project = project;
     }
+
     public String getIconFileName() {
         return "notepad.png";
     }
@@ -61,16 +63,17 @@ public class AllChangesAction implements Action {
 
     /**
      * Returns all changes which contribute to a build.
+     *
      * @param build
      * @return
      */
     public static Multimap<ChangeLogSet.Entry, AbstractBuild> getAllChanges(AbstractBuild build) {
         Set<AbstractBuild> builds = getContributingBuilds(build);
-        Multimap<String,ChangeLogSet.Entry> changes = ArrayListMultimap.create();
+        Multimap<String, ChangeLogSet.Entry> changes = ArrayListMultimap.create();
         for (AbstractBuild changedBuild : builds) {
             ChangeLogSet<ChangeLogSet.Entry> changeSet = changedBuild.getChangeSet();
             for (ChangeLogSet.Entry entry : changeSet) {
-                changes.put(entry.getCommitId()+entry.getMsgAnnotated()+entry.getTimestamp(), entry);
+                changes.put(entry.getCommitId() + entry.getMsgAnnotated() + entry.getTimestamp(), entry);
             }
         }
         Multimap<ChangeLogSet.Entry, AbstractBuild> change2Build = HashMultimap.create();
@@ -85,6 +88,7 @@ public class AllChangesAction implements Action {
 
     /**
      * Uses all ChangesAggregators to calculate the contributing builds
+     *
      * @return all changes which contribute to the given build
      */
     public static Set<AbstractBuild> getContributingBuilds(AbstractBuild build) {

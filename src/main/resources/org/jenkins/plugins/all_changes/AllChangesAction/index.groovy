@@ -34,10 +34,10 @@ import org.apache.commons.jelly.XMLOutput
 import org.dom4j.io.SAXContentHandler
 import org.jvnet.localizer.LocaleProvider
 
-f=namespace(lib.FormTagLib)
-l=namespace(lib.LayoutTagLib)
-t=namespace("/lib/hudson")
-st=namespace("jelly:stapler")
+f = namespace(lib.FormTagLib)
+l = namespace(lib.LayoutTagLib)
+t = namespace("/lib/hudson")
+st = namespace("jelly:stapler")
 
 private def wrapOutput(Closure viewInstructions) {
   def sc = new SAXContentHandler()
@@ -54,14 +54,14 @@ l.layout(title: _("All Changes")) {
     def to = request.getParameter('to')
 
     h1(_("All Changes"))
-    def builds = Functions.filter(my.project.buildsAsMap,from,to).values()
+    def builds = Functions.filter(my.project.buildsAsMap, from, to).values()
     for (build in builds) {
       Multimap<ChangeLogSet.Entry, AbstractBuild> changes = my.getAllChanges(build);
       if (changes.empty) {
         continue
       }
       h2() {
-        a(href:"${my.project.absoluteUrl}/${build.number}/changes",
+        a(href: "${my.project.absoluteUrl}/${build.number}/changes",
                 "${build.displayName}  (${DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, LocaleProvider.locale).format(build.timestamp.time)})")
       }
       ol() {

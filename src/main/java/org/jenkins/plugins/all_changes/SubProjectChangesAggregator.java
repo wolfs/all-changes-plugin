@@ -45,17 +45,17 @@ public class SubProjectChangesAggregator extends ChangesAggregator {
     @Override
     public List<AbstractBuild> aggregateBuildsWithChanges(AbstractBuild build) {
         AbstractProject project = build.getProject();
-        List<AbstractProject<?,?>> subProjects = new ArrayList<AbstractProject<?, ?>>();
-        if(project instanceof FreeStyleProject) {
+        List<AbstractProject<?, ?>> subProjects = new ArrayList<AbstractProject<?, ?>>();
+        if (project instanceof FreeStyleProject) {
             FreeStyleProject proj = (FreeStyleProject) project;
             List<Builder> builders = proj.getBuilders();
             for (Builder builder : builders) {
                 if (builder instanceof TriggerBuilder) {
                     TriggerBuilder tBuilder = (TriggerBuilder) builder;
                     for (BlockableBuildTriggerConfig config : tBuilder.getConfigs()) {
-                        for (AbstractProject<?,?> abstractProject : config.getProjectList()) {
+                        for (AbstractProject<?, ?> abstractProject : config.getProjectList()) {
                             if (config.getBlock() != null) {
-                                subProjects.add( abstractProject);
+                                subProjects.add(abstractProject);
                             }
                         }
                     }
@@ -64,7 +64,7 @@ public class SubProjectChangesAggregator extends ChangesAggregator {
         }
         ArrayList<AbstractBuild> builds = new ArrayList<AbstractBuild>();
         for (AbstractProject<?, ?> subProject : subProjects) {
-            RunList<? extends AbstractBuild<?,?>> subBuildsDuringBuild = subProject.getBuilds().byTimestamp(build.getTimeInMillis(), build.getTimeInMillis() + build.getDuration());
+            RunList<? extends AbstractBuild<?, ?>> subBuildsDuringBuild = subProject.getBuilds().byTimestamp(build.getTimeInMillis(), build.getTimeInMillis() + build.getDuration());
             for (AbstractBuild<?, ?> subBuild : subBuildsDuringBuild) {
                 List<Cause.UpstreamCause> upstreamCauses = new ArrayList<Cause.UpstreamCause>();
                 List<Cause> causes = subBuild.getCauses();

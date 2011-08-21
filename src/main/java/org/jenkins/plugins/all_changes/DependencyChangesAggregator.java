@@ -40,7 +40,7 @@ public class DependencyChangesAggregator extends ChangesAggregator {
     @Override
     public List<AbstractBuild> aggregateBuildsWithChanges(AbstractBuild build) {
         ImmutableList.Builder<AbstractBuild> builder = ImmutableList.<AbstractBuild>builder();
-        Map<AbstractProject,AbstractBuild.DependencyChange> depChanges = build.getDependencyChanges((AbstractBuild) build.getPreviousBuild());
+        Map<AbstractProject, AbstractBuild.DependencyChange> depChanges = build.getDependencyChanges((AbstractBuild) build.getPreviousBuild());
         for (AbstractBuild.DependencyChange depChange : depChanges.values()) {
             builder.addAll(depChange.getBuilds());
         }
