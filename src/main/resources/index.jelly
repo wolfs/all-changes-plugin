@@ -1,0 +1,6 @@
+<!--
+  This view is used to render the installed plugins page.
+-->
+<div>
+  This plugin shows all changes (also from dependent projects, subprojects, ...) for a project
+</div>
