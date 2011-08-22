@@ -24,9 +24,11 @@
 
 package org.jenkinsci.plugins.all_changes;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import hudson.Extension;
+import hudson.Plugin;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
@@ -35,6 +37,7 @@ import hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig;
 import hudson.plugins.parameterizedtrigger.TriggerBuilder;
 import hudson.tasks.Builder;
 import hudson.util.RunList;
+import jenkins.model.Jenkins;
 
 import java.util.Collection;
 import java.util.List;
@@ -47,6 +50,11 @@ import java.util.Set;
 public class SubProjectChangesAggregator extends ChangesAggregator {
     @Override
     public Collection<AbstractBuild> aggregateBuildsWithChanges(AbstractBuild build) {
+        Plugin parameterizedTrigger = Jenkins.getInstance().getPlugin("parameterized-trigger");
+        if (parameterizedTrigger == null) {
+            return ImmutableList.of();
+        }
+
         AbstractProject project = build.getProject();
         Set<AbstractProject<?, ?>> subProjects = Sets.newHashSet();
         Set<AbstractBuild> builds = Sets.newHashSet();
