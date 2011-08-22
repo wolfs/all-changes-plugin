@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.jenkins.plugins.all_changes;
+package org.jenkinsci.plugins.all_changes;
 
 import hudson.Extension;
 import hudson.model.AbstractProject;

@@ -28,14 +28,23 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>1.417</version><!-- which version of Jenkins is this plugin built
-            against? -->
+    <version>1.417</version><!-- which version of Jenkins is this plugin built against? -->
   </parent>
 
   <groupId>org.jenkins-ci.plugins</groupId>
   <artifactId>all-changes</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
+  <name>All changes plugin</name>
+  <description>Shows more changes on the project page</description>
+  <url>http://wiki.jenkins-ci.org/display/JENKINS/All+Changes+Plugin</url>
+
+  <developers>
+    <developer>
+      <id>wolfs</id>
+      <name>Stefan Wolf</name>
+    </developer>
+  </developers>
 
   <dependencies>
     <dependency>
@@ -97,4 +106,9 @@ artifacts that we need -->
       <url>http://maven.glassfish.org/content/groups/public/</url>
     </pluginRepository>
   </pluginRepositories>
+  <scm>
+    <connection>scm:git:git://github.com/jenkinsci/all-changes-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/all-changes-plugin.git</developerConnection>
+    <url>http://github.com/jenkinsci/all-changes-plugin</url>
+  </scm>
 </project>

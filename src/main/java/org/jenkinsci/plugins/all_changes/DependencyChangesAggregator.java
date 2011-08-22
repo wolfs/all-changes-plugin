@@ -22,20 +22,28 @@
  * THE SOFTWARE.
  */
 
-package org.jenkins.plugins.all_changes;
+package org.jenkinsci.plugins.all_changes;
 
-import hudson.ExtensionList;
-import hudson.ExtensionPoint;
+import com.google.common.collect.ImmutableList;
+import hudson.Extension;
 import hudson.model.AbstractBuild;
-import jenkins.model.Jenkins;
+import hudson.model.AbstractProject;
 
 import java.util.Collection;
+import java.util.Map;
 
-public abstract class ChangesAggregator implements ExtensionPoint {
-    public abstract Collection<AbstractBuild> aggregateBuildsWithChanges(AbstractBuild build);
-
-    public static ExtensionList<ChangesAggregator> all() {
-        return Jenkins.getInstance().getExtensionList(ChangesAggregator.class);
+/**
+ * @author wolfs
+ */
+@Extension
+public class DependencyChangesAggregator extends ChangesAggregator {
+    @Override
+    public Collection<AbstractBuild> aggregateBuildsWithChanges(AbstractBuild build) {
+        ImmutableList.Builder<AbstractBuild> builder = ImmutableList.<AbstractBuild>builder();
+        Map<AbstractProject, AbstractBuild.DependencyChange> depChanges = build.getDependencyChanges((AbstractBuild) build.getPreviousBuild());
+        for (AbstractBuild.DependencyChange depChange : depChanges.values()) {
+            builder.addAll(depChange.getBuilds());
+        }
+        return builder.build();
     }
-
 }

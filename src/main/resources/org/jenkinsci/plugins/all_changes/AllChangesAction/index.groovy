@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.jenkins.plugins.all_changes.AllChangesAction
+package org.jenkinsci.plugins.all_changes.AllChangesAction
 
 import com.google.common.collect.Multimap
 import hudson.Functions
